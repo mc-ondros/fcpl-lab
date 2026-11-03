@@ -1,3 +1,5 @@
+using Capstone.Core.Events;
+
 namespace Capstone.Core.Model;
 
 /// <summary>
@@ -16,6 +18,12 @@ public sealed class SlotMachine
         _random = random ?? new Random();
         _paytable = paytable ?? new Paytable();
     }
+
+    /// <summary>Fires after every completed spin.</summary>
+    public event EventHandler<SpinCompletedEventArgs>? SpinCompleted;
+
+    /// <summary>Fires only when the reels land the jackpot.</summary>
+    public event EventHandler<JackpotLandedEventArgs>? JackpotLanded;
 
     /// <summary>
     /// Executes a spin for the given session.
@@ -45,7 +53,7 @@ public sealed class SlotMachine
         _spinCounter++;
         var time = timestamp ?? DateTimeOffset.UtcNow;
 
-        return new Spin
+        var spin = new Spin
         {
             Id = $"spin-{_spinCounter:D5}",
             Timestamp = time,
@@ -56,6 +64,15 @@ public sealed class SlotMachine
             IsFreeSpin = false,
             SessionId = session.Id,
         };
+
+        session.Spins.Add(spin);
+
+        SpinCompleted?.Invoke(this, new SpinCompletedEventArgs { Spin = spin });
+
+        if (_paytable.IsJackpot(reels))
+            JackpotLanded?.Invoke(this, new JackpotLandedEventArgs { Spin = spin, Payout = payout });
+
+        return spin;
     }
 
     private Symbol RollSymbol() => AllSymbols[_random.Next(AllSymbols.Length)];

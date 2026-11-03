@@ -1,0 +1,10 @@
+<Project>
+  <!-- Extra packages for the capstone. This file is ours; sq update never replaces it. -->
+  <ItemGroup>
+    <!-- 11.3 is the newest Avalonia line that still targets .NET 8, so it builds on the .NET 9 lab PCs. -->
+    <PackageVersion Include="Avalonia" Version="11.3.22" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.3.22" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.22" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.22" />
+  </ItemGroup>
+</Project>

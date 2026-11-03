@@ -1,3 +1,5 @@
+using Capstone.Core.Collections;
+
 namespace Capstone.Core.Model;
 
 /// <summary>
@@ -5,6 +7,9 @@ namespace Capstone.Core.Model;
 /// </summary>
 public sealed class Session : ISlotEntity
 {
+    /// <summary>Every spin played during this visit, parent to many children.</summary>
+    public SpinLog Spins { get; } = new();
+
     private readonly string _id = "";
     private readonly string _playerName = "";
     private int _currentCredits;

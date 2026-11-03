@@ -1,0 +1,74 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Capstone.Gui.MainWindow"
+        x:DataType="vm:ArcadeViewModel"
+        xmlns:vm="using:Capstone.Gui"
+        Title="LuckySpin"
+        Width="640" Height="560"
+        MinWidth="520" MinHeight="460">
+  <DockPanel Margin="16">
+    <StackPanel DockPanel.Dock="Top" Spacing="4">
+      <TextBlock Text="LuckySpin" FontSize="28" FontWeight="Bold" />
+      <TextBlock Opacity="0.7">
+        <Run Text="{Binding PlayerName}" />
+        <Run Text=" · credits only, never money" />
+      </TextBlock>
+    </StackPanel>
+
+    <Border DockPanel.Dock="Top" Margin="0,16,0,12" Padding="12"
+            CornerRadius="8" BorderThickness="1" BorderBrush="#444">
+      <Grid ColumnDefinitions="*,*,*">
+        <Border Grid.Column="0" Margin="4" Padding="12" CornerRadius="6" Background="#222">
+          <TextBlock Classes="reel" Text="{Binding Reel1}" />
+        </Border>
+        <Border Grid.Column="1" Margin="4" Padding="12" CornerRadius="6" Background="#222">
+          <TextBlock Classes="reel" Text="{Binding Reel2}" />
+        </Border>
+        <Border Grid.Column="2" Margin="4" Padding="12" CornerRadius="6" Background="#222">
+          <TextBlock Classes="reel" Text="{Binding Reel3}" />
+        </Border>
+      </Grid>
+    </Border>
+
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,*,*,*" Margin="0,0,0,12">
+      <StackPanel Grid.Column="0">
+        <TextBlock Opacity="0.7" Text="Credits" />
+        <TextBlock FontSize="22" FontWeight="Bold" Text="{Binding Credits}" />
+      </StackPanel>
+      <StackPanel Grid.Column="1">
+        <TextBlock Opacity="0.7" Text="Spins" />
+        <TextBlock FontSize="22" FontWeight="Bold" Text="{Binding SpinsPlayed}" />
+      </StackPanel>
+      <StackPanel Grid.Column="2">
+        <TextBlock Opacity="0.7" Text="Jackpots" />
+        <TextBlock FontSize="22" FontWeight="Bold" Text="{Binding Jackpots}" />
+      </StackPanel>
+      <StackPanel Grid.Column="3" Spacing="4">
+        <TextBlock Opacity="0.7" Text="Bet" />
+        <ComboBox ItemsSource="{Binding BetChoices}" SelectedItem="{Binding Bet}" MinWidth="80" />
+      </StackPanel>
+    </Grid>
+
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+      <Button Content="SPIN" Command="{Binding SpinCommand}" IsEnabled="{Binding CanSpin}"
+              MinWidth="120" MinHeight="36" FontWeight="Bold" />
+      <Button Content="New session" Command="{Binding NewGameCommand}" MinHeight="36" />
+      <TextBlock VerticalAlignment="Center" Margin="8,0,0,0" Text="{Binding Status}" />
+    </StackPanel>
+
+    <TextBlock DockPanel.Dock="Top" Opacity="0.7" Margin="0,8,0,4" Text="This session" />
+    <ListBox ItemsSource="{Binding History}" BorderThickness="1" BorderBrush="#444">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Grid ColumnDefinitions="90,*,60,70,80" Margin="0,2">
+            <TextBlock Grid.Column="0" Text="{Binding When}" />
+            <TextBlock Grid.Column="1" Text="{Binding Reels}" />
+            <TextBlock Grid.Column="2" Text="{Binding Bet}" HorizontalAlignment="Right" />
+            <TextBlock Grid.Column="3" Text="{Binding Payout}" HorizontalAlignment="Right" />
+            <TextBlock Grid.Column="4" Text="{Binding CreditsAfter}" HorizontalAlignment="Right" />
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</Window>
