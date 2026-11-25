@@ -3,72 +3,371 @@
         x:Class="Capstone.Gui.MainWindow"
         x:DataType="vm:ArcadeViewModel"
         xmlns:vm="using:Capstone.Gui"
-        Title="LuckySpin"
-        Width="640" Height="560"
-        MinWidth="520" MinHeight="460">
-  <DockPanel Margin="16">
-    <StackPanel DockPanel.Dock="Top" Spacing="4">
-      <TextBlock Text="LuckySpin" FontSize="28" FontWeight="Bold" />
-      <TextBlock Opacity="0.7">
-        <Run Text="{Binding PlayerName}" />
-        <Run Text=" · credits only, never money" />
-      </TextBlock>
-    </StackPanel>
+        Title="LuckySpin Arcade"
+        Width="860" Height="720"
+        MinWidth="740" MinHeight="620"
+        Background="#0B0812">
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Ctrl+Shift+A" Command="{Binding ToggleAdminCommand}" />
+    <KeyBinding Gesture="F12" Command="{Binding ToggleAdminCommand}" />
+    <KeyBinding Gesture="Escape" Command="{Binding CloseAdminCommand}" />
+  </Window.KeyBindings>
 
-    <Border DockPanel.Dock="Top" Margin="0,16,0,12" Padding="12"
-            CornerRadius="8" BorderThickness="1" BorderBrush="#444">
-      <Grid ColumnDefinitions="*,*,*">
-        <Border Grid.Column="0" Margin="4" Padding="12" CornerRadius="6" Background="#222">
-          <TextBlock Classes="reel" Text="{Binding Reel1}" />
-        </Border>
-        <Border Grid.Column="1" Margin="4" Padding="12" CornerRadius="6" Background="#222">
-          <TextBlock Classes="reel" Text="{Binding Reel2}" />
-        </Border>
-        <Border Grid.Column="2" Margin="4" Padding="12" CornerRadius="6" Background="#222">
-          <TextBlock Classes="reel" Text="{Binding Reel3}" />
+  <Grid>
+    <Border Classes="cabinet-shell" Margin="14" Padding="16">
+      <DockPanel>
+
+        <!-- TOP MARQUEE HEADER -->
+        <Border DockPanel.Dock="Top" Classes="marquee"
+                Classes.win-pulse="{Binding IsWinPulse}"
+                Classes.jackpot-pulse="{Binding IsJackpotPulse}"
+                Margin="0,0,0,14">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="★" FontSize="22" Foreground="#F5D061" VerticalAlignment="Center"
+                        Background="Transparent" BorderThickness="0" Padding="0"
+                        Command="{Binding ToggleAdminCommand}" />
+                <TextBlock Text="LUCKY SPIN" FontSize="26" FontWeight="Black" Foreground="#FFE680" LetterSpacing="3" />
+                <TextBlock Text="★" FontSize="22" Foreground="#F5D061" VerticalAlignment="Center" />
+              </StackPanel>
+            <TextBlock FontSize="12" Foreground="#D8C8B8">
+              <Run Text="Player: " />
+              <Run Text="{Binding PlayerName}" FontWeight="Bold" />
+              <Run Text="  ·  Credits only, never money" />
+            </TextBlock>
+          </StackPanel>
+
+          <Border Grid.Column="1" Background="#1A0B12" BorderBrush="#F5D061" BorderThickness="1"
+                  CornerRadius="8" Padding="14,6" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center">
+              <TextBlock Text="TOP JACKPOT" FontSize="10" FontWeight="Bold" Foreground="#F5D061"
+                         HorizontalAlignment="Center" LetterSpacing="1.5" />
+              <TextBlock Text="100x BET" FontSize="18" FontWeight="Black" Foreground="#FFFFFF"
+                         HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Border>
+
+      <!-- MAIN CABINET BODY: REELS + CONTROLS ON LEFT, PAYTABLE ON RIGHT -->
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="*,220" Margin="0,0,0,14">
+
+        <!-- LEFT COLUMN: REELS, READOUTS, CONTROLS -->
+        <StackPanel Grid.Column="0" Spacing="12" Margin="0,0,14,0">
+
+          <!-- 3-REEL MECHANICAL WINDOW -->
+          <Border Classes="reel-housing">
+            <Grid>
+              <!-- Center Payline Bar -->
+              <Border Height="86" VerticalAlignment="Center" CornerRadius="6"
+                      Background="#1AF5D061" BorderBrush="#99F5D061" BorderThickness="0,1,0,1" />
+
+              <Grid ColumnDefinitions="Auto,*,*,*,Auto">
+                <TextBlock Grid.Column="0" Text="▶" FontSize="18" Foreground="#F5D061"
+                           VerticalAlignment="Center" Margin="0,0,6,0" />
+
+                <!-- Reel 1 -->
+                <Border Grid.Column="1" Classes="reel-drum"
+                        Classes.win-pulse="{Binding IsWinPulse}"
+                        Classes.jackpot-pulse="{Binding IsJackpotPulse}"
+                        Padding="8,10">
+                  <StackPanel Spacing="6" HorizontalAlignment="Center">
+                    <TextBlock Classes="reel-peek" Text="{Binding Reel1State.TopIcon}" />
+                    <StackPanel Spacing="2" Height="82" VerticalAlignment="Center">
+                      <TextBlock Classes="reel-icon"
+                                 Classes.win-pulse="{Binding WinFlashOn}"
+                                 Text="{Binding Reel1State.CenterIcon}"
+                                 Foreground="{Binding Reel1State.CenterBrush}" />
+                      <TextBlock Classes="reel-label" Text="{Binding Reel1State.CenterLabel}"
+                                 Foreground="{Binding Reel1State.CenterBrush}" />
+                    </StackPanel>
+                    <TextBlock Classes="reel-peek" Text="{Binding Reel1State.BottomIcon}" />
+                  </StackPanel>
+                </Border>
+
+                <!-- Reel 2 -->
+                <Border Grid.Column="2" Classes="reel-drum"
+                        Classes.win-pulse="{Binding IsWinPulse}"
+                        Classes.jackpot-pulse="{Binding IsJackpotPulse}"
+                        Padding="8,10">
+                  <StackPanel Spacing="6" HorizontalAlignment="Center">
+                    <TextBlock Classes="reel-peek" Text="{Binding Reel2State.TopIcon}" />
+                    <StackPanel Spacing="2" Height="82" VerticalAlignment="Center">
+                      <TextBlock Classes="reel-icon"
+                                 Classes.win-pulse="{Binding WinFlashOn}"
+                                 Text="{Binding Reel2State.CenterIcon}"
+                                 Foreground="{Binding Reel2State.CenterBrush}" />
+                      <TextBlock Classes="reel-label" Text="{Binding Reel2State.CenterLabel}"
+                                 Foreground="{Binding Reel2State.CenterBrush}" />
+                    </StackPanel>
+                    <TextBlock Classes="reel-peek" Text="{Binding Reel2State.BottomIcon}" />
+                  </StackPanel>
+                </Border>
+
+                <!-- Reel 3 -->
+                <Border Grid.Column="3" Classes="reel-drum"
+                        Classes.win-pulse="{Binding IsWinPulse}"
+                        Classes.jackpot-pulse="{Binding IsJackpotPulse}"
+                        Padding="8,10">
+                  <StackPanel Spacing="6" HorizontalAlignment="Center">
+                    <TextBlock Classes="reel-peek" Text="{Binding Reel3State.TopIcon}" />
+                    <StackPanel Spacing="2" Height="82" VerticalAlignment="Center">
+                      <TextBlock Classes="reel-icon"
+                                 Classes.win-pulse="{Binding WinFlashOn}"
+                                 Text="{Binding Reel3State.CenterIcon}"
+                                 Foreground="{Binding Reel3State.CenterBrush}" />
+                      <TextBlock Classes="reel-label" Text="{Binding Reel3State.CenterLabel}"
+                                 Foreground="{Binding Reel3State.CenterBrush}" />
+                    </StackPanel>
+                    <TextBlock Classes="reel-peek" Text="{Binding Reel3State.BottomIcon}" />
+                  </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Column="4" Text="◀" FontSize="18" Foreground="#F5D061"
+                           VerticalAlignment="Center" Margin="6,0,0,0" />
+              </Grid>
+            </Grid>
+          </Border>
+
+          <!-- STATUS / WIN TICKER -->
+          <Border Classes="win-ticker"
+                  Classes.win-pulse="{Binding IsWinPulse}"
+                  Classes.jackpot-pulse="{Binding IsJackpotPulse}">
+            <TextBlock Text="{Binding Status}" FontSize="14" FontWeight="Bold"
+                       Foreground="#FFE680" HorizontalAlignment="Center" />
+          </Border>
+
+          <!-- DIGITAL LED METERS -->
+          <Grid ColumnDefinitions="*,*,*,*">
+            <Border Grid.Column="0" Classes="led-box" Margin="0,0,4,0">
+              <StackPanel>
+                <TextBlock Classes="led-label" Text="CREDITS" />
+                <TextBlock Classes="led-value" Text="{Binding Credits}" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Classes="led-box" Margin="4,0">
+              <StackPanel>
+                <TextBlock Classes="led-label" Text="LAST WIN" />
+                <TextBlock Classes="led-value" Text="{Binding DisplayedLastWin}" Foreground="#4ADE80" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="2" Classes="led-box" Margin="4,0">
+              <StackPanel>
+                <TextBlock Classes="led-label" Text="SPINS" />
+                <TextBlock Classes="led-value" Text="{Binding SpinsPlayed}" Foreground="#E2E8F0" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="3" Classes="led-box" Margin="4,0,0,0">
+              <StackPanel>
+                <TextBlock Classes="led-label" Text="JACKPOTS" />
+                <TextBlock Classes="led-value" Text="{Binding Jackpots}" Foreground="#F472B6" />
+              </StackPanel>
+            </Border>
+          </Grid>
+
+          <!-- CONTROL DECK: BET CHIPS + SPIN LEVER BUTTON -->
+          <Border Background="#1B162B" BorderBrush="#3D3252" BorderThickness="1"
+                  CornerRadius="10" Padding="12">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0" Spacing="6" VerticalAlignment="Center">
+                <TextBlock Classes="led-label" Text="SELECT BET" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <ItemsControl ItemsSource="{Binding BetButtons}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:BetOption">
+                        <Button Classes="bet-chip"
+                                Classes.selected="{Binding IsSelected}"
+                                Content="{Binding Label}"
+                                Command="{Binding SelectCommand}" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <Button Classes="bet-chip" Content="MAX" Command="{Binding MaxBetCommand}"
+                          Padding="10,0" />
+                </StackPanel>
+              </StackPanel>
+
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Content="New Session" Command="{Binding NewGameCommand}"
+                        Height="46" Padding="12,0" CornerRadius="8" />
+                <Button Classes="spin-btn" Content="{Binding SpinButtonText}"
+                        Command="{Binding SpinCommand}" IsEnabled="{Binding CanSpin}"
+                        MinWidth="148" Height="48" />
+              </StackPanel>
+            </Grid>
+          </Border>
+        </StackPanel>
+
+        <!-- RIGHT COLUMN: PAYTABLE CARD -->
+        <Border Grid.Column="1" Background="#100D1B" BorderBrush="#8A6D1B"
+                BorderThickness="1" CornerRadius="10" Padding="12">
+          <StackPanel Spacing="6">
+            <TextBlock Text="PAYTABLE" FontSize="13" FontWeight="Black" Foreground="#F5D061"
+                       HorizontalAlignment="Center" LetterSpacing="2" Margin="0,0,0,4" />
+
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="★ ★ ★  Wild" FontSize="12" Foreground="#00F5D4" />
+              <TextBlock Grid.Column="1" Text="100x" FontSize="12" FontWeight="Bold" Foreground="#FFE680" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="7 7 7  Seven" FontSize="12" Foreground="#FF3B30" />
+              <TextBlock Grid.Column="1" Text="100x" FontSize="12" FontWeight="Bold" Foreground="#FFE680" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="BAR x3" FontSize="12" Foreground="#E2E8F0" />
+              <TextBlock Grid.Column="1" Text="50x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🔔 x3  Bell" FontSize="12" Foreground="#FFD166" />
+              <TextBlock Grid.Column="1" Text="25x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🍇 x3  Plum" FontSize="12" Foreground="#C77DFF" />
+              <TextBlock Grid.Column="1" Text="15x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🍊 x3  Orange" FontSize="12" Foreground="#FF9F43" />
+              <TextBlock Grid.Column="1" Text="10x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🍋 x3  Lemon" FontSize="12" Foreground="#FFE066" />
+              <TextBlock Grid.Column="1" Text="8x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🍒 x3  Cherry" FontSize="12" Foreground="#FF4D6D" />
+              <TextBlock Grid.Column="1" Text="5x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Separator Background="#2F2645" Margin="0,4" />
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🍒 x2  Any" FontSize="12" Foreground="#FF8FA3" />
+              <TextBlock Grid.Column="1" Text="3x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" Text="🍒 x1  Any" FontSize="12" Foreground="#FF8FA3" />
+              <TextBlock Grid.Column="1" Text="1x" FontSize="12" FontWeight="Bold" />
+            </Grid>
+            <TextBlock Text="★ Wild substitutes for any symbol" FontSize="10" Opacity="0.65"
+                       TextWrapping="Wrap" Margin="0,6,0,0" />
+          </StackPanel>
         </Border>
       </Grid>
-    </Border>
 
-    <Grid DockPanel.Dock="Top" ColumnDefinitions="*,*,*,*" Margin="0,0,0,12">
-      <StackPanel Grid.Column="0">
-        <TextBlock Opacity="0.7" Text="Credits" />
-        <TextBlock FontSize="22" FontWeight="Bold" Text="{Binding Credits}" />
-      </StackPanel>
-      <StackPanel Grid.Column="1">
-        <TextBlock Opacity="0.7" Text="Spins" />
-        <TextBlock FontSize="22" FontWeight="Bold" Text="{Binding SpinsPlayed}" />
-      </StackPanel>
-      <StackPanel Grid.Column="2">
-        <TextBlock Opacity="0.7" Text="Jackpots" />
-        <TextBlock FontSize="22" FontWeight="Bold" Text="{Binding Jackpots}" />
-      </StackPanel>
-      <StackPanel Grid.Column="3" Spacing="4">
-        <TextBlock Opacity="0.7" Text="Bet" />
-        <ComboBox ItemsSource="{Binding BetChoices}" SelectedItem="{Binding Bet}" MinWidth="80" />
-      </StackPanel>
-    </Grid>
+      <!-- SESSION HISTORY LOG -->
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,0,0,6">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <TextBlock Text="{Binding RecentSymbolsText}" FontSize="12" Foreground="#F5D061" />
+          <TextBlock Text="{Binding SessionStatsText}" FontSize="12" Opacity="0.75" />
+        </StackPanel>
+        <TextBox Grid.Column="1" Width="170" Watermark="Search spins..."
+                 Text="{Binding SearchQuery}" Margin="0,0,8,0" />
+        <Button Grid.Column="2" Content="Save" Command="{Binding SaveStoreCommand}"
+                Padding="10,4" Margin="0,0,6,0" FontSize="12" />
+        <Button Grid.Column="3" Content="Load" Command="{Binding LoadStoreCommand}"
+                Padding="10,4" FontSize="12" />
+      </Grid>
 
-    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
-      <Button Content="SPIN" Command="{Binding SpinCommand}" IsEnabled="{Binding CanSpin}"
-              MinWidth="120" MinHeight="36" FontWeight="Bold" />
-      <Button Content="New session" Command="{Binding NewGameCommand}" MinHeight="36" />
-      <TextBlock VerticalAlignment="Center" Margin="8,0,0,0" Text="{Binding Status}" />
-    </StackPanel>
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="90,*,60,70,80" Margin="12,0,12,4">
+        <TextBlock Grid.Column="0" Classes="led-label" Text="TIME" />
+        <TextBlock Grid.Column="1" Classes="led-label" Text="REELS" />
+        <TextBlock Grid.Column="2" Classes="led-label" Text="BET" HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="3" Classes="led-label" Text="PAYOUT" HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="4" Classes="led-label" Text="BALANCE" HorizontalAlignment="Right" />
+      </Grid>
 
-    <TextBlock DockPanel.Dock="Top" Opacity="0.7" Margin="0,8,0,4" Text="This session" />
-    <ListBox ItemsSource="{Binding History}" BorderThickness="1" BorderBrush="#444">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <Grid ColumnDefinitions="90,*,60,70,80" Margin="0,2">
-            <TextBlock Grid.Column="0" Text="{Binding When}" />
-            <TextBlock Grid.Column="1" Text="{Binding Reels}" />
-            <TextBlock Grid.Column="2" Text="{Binding Bet}" HorizontalAlignment="Right" />
-            <TextBlock Grid.Column="3" Text="{Binding Payout}" HorizontalAlignment="Right" />
-            <TextBlock Grid.Column="4" Text="{Binding CreditsAfter}" HorizontalAlignment="Right" />
+      <ListBox ItemsSource="{Binding History}" Background="#09080F"
+               BorderThickness="1" BorderBrush="#3D3252" CornerRadius="8">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:SpinRow">
+            <Grid ColumnDefinitions="90,*,60,70,80" Margin="0,2">
+              <TextBlock Grid.Column="0" Text="{Binding When}" Opacity="0.75" />
+              <TextBlock Grid.Column="1" Text="{Binding Reels}" FontWeight="SemiBold" />
+              <TextBlock Grid.Column="2" Text="{Binding Bet}" HorizontalAlignment="Right" />
+              <TextBlock Grid.Column="3" Text="{Binding Payout}" HorizontalAlignment="Right"
+                         Foreground="#4ADE80" FontWeight="Bold" />
+              <TextBlock Grid.Column="4" Text="{Binding CreditsAfter}" HorizontalAlignment="Right"
+                         Foreground="#F5D061" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+    </DockPanel>
+  </Border>
+
+    <!-- HIDDEN ADMIN / TECHNICIAN ODDS MENU OVERLAY -->
+    <Border IsVisible="{Binding IsAdminOpen}" Background="#CC06040A" Padding="24">
+      <Border Width="540" VerticalAlignment="Center" HorizontalAlignment="Center"
+              Background="#151024" BorderBrush="#F5D061" BorderThickness="2"
+              CornerRadius="14" Padding="18">
+        <StackPanel Spacing="12">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" Spacing="2">
+              <TextBlock Text="TECHNICIAN ODDS MENU" FontSize="18" FontWeight="Black"
+                         Foreground="#F5D061" LetterSpacing="1.5" />
+              <StackPanel Orientation="Horizontal" Spacing="14">
+                <TextBlock Text="{Binding TheoreticalRtpText}" FontSize="12" FontWeight="Bold" Foreground="#4ADE80" />
+                <TextBlock Text="{Binding TotalWeightText}" FontSize="12" Opacity="0.75" />
+              </StackPanel>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Close" Command="{Binding CloseAdminCommand}"
+                    Padding="12,6" CornerRadius="6" />
           </Grid>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
-  </DockPanel>
+
+          <!-- Presets -->
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="Presets:" VerticalAlignment="Center" FontSize="12" Opacity="0.75" Margin="0,0,4,0" />
+            <Button Content="Realistic" Command="{Binding ApplyRealisticOddsCommand}" FontSize="12" Padding="10,5" />
+            <Button Content="Uniform" Command="{Binding ApplyUniformOddsCommand}" FontSize="12" Padding="10,5" />
+            <Button Content="Generous" Command="{Binding ApplyGenerousOddsCommand}" FontSize="12" Padding="10,5" />
+            <Button Content="Tight" Command="{Binding ApplyTightOddsCommand}" FontSize="12" Padding="10,5" />
+          </StackPanel>
+
+          <!-- Symbol Weight Controls -->
+          <Border Background="#0C0915" BorderBrush="#3D3252" BorderThickness="1" CornerRadius="8" Padding="10">
+            <ItemsControl ItemsSource="{Binding SymbolOddsList}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SymbolOddsItem">
+                  <Grid ColumnDefinitions="110,Auto,*,Auto,42,54" Margin="0,4">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Icon}" Foreground="{Binding Brush}" FontWeight="Bold" Width="26" />
+                      <TextBlock Text="{Binding Label}" Foreground="{Binding Brush}" FontSize="12" FontWeight="Bold"
+                                 VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="-" Command="{Binding DecreaseCommand}"
+                            Width="28" Height="28" HorizontalContentAlignment="Center" Padding="0" />
+                    <Slider Grid.Column="2" Minimum="0" Maximum="50" Value="{Binding Weight}"
+                            Margin="8,0" VerticalAlignment="Center" />
+                    <Button Grid.Column="3" Content="+" Command="{Binding IncreaseCommand}"
+                            Width="28" Height="28" HorizontalContentAlignment="Center" Padding="0" />
+                    <TextBlock Grid.Column="4" Text="{Binding Weight}" HorizontalAlignment="Right"
+                               VerticalAlignment="Center" FontWeight="Bold" />
+                    <TextBlock Grid.Column="5" Text="{Binding ProbabilityText}" HorizontalAlignment="Right"
+                               VerticalAlignment="Center" Opacity="0.75" FontSize="12" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Border>
+
+          <!-- Test / Technician Utilities -->
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <Button Grid.Column="0" Content="+100 Credits" Command="{Binding AddTestCreditsCommand}"
+                    Padding="12,6" CornerRadius="6" />
+            <CheckBox Grid.Column="1" Content="Force Jackpot Next Spin"
+                      IsChecked="{Binding ForceJackpotNextSpin}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Button Grid.Column="2" Content="Done" Command="{Binding CloseAdminCommand}"
+                    Background="#D4AF37" Foreground="#140F1F" FontWeight="Bold"
+                    Padding="16,6" CornerRadius="6" />
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Border>
+  </Grid>
 </Window>

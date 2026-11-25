@@ -1,3 +1,5 @@
+using SharpQuest.Contracts;
+
 namespace Capstone.Core.Model;
 
 /// <summary>
@@ -5,8 +7,12 @@ namespace Capstone.Core.Model;
 /// Abstract so the machine can hand out different kinds of bonus
 /// and the caller can treat them uniformly.
 /// </summary>
-public abstract class Bonus : ISlotEntity
+public abstract class Bonus : ISlotEntity, IItem
 {
+    public string Id { get; init; } = "";
+
+    public virtual string DisplayName => $"{Reason} — {Reward}";
+
     /// <summary>Why the bonus was awarded, e.g. the reels that triggered it.</summary>
     public required string Reason { get; init; }
 

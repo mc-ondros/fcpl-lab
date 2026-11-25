@@ -4,11 +4,180 @@
              RequestedThemeVariant="Dark">
   <Application.Styles>
     <FluentTheme />
-    <Style Selector="TextBlock.reel">
-      <Setter Property="FontSize" Value="28" />
+
+    <!-- Cabinet & panel containers -->
+    <Style Selector="Border.cabinet-shell">
+      <Setter Property="Background" Value="#141020" />
+      <Setter Property="BorderBrush" Value="#C89B3C" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <Style Selector="Border.marquee">
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="BorderBrush" Value="#F5D061" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="Padding" Value="14,10" />
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+          <GradientStop Color="#4C0F19" Offset="0" />
+          <GradientStop Color="#230A18" Offset="0.5" />
+          <GradientStop Color="#4C0F19" Offset="1" />
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <Style Selector="Border.reel-housing">
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="BorderBrush" Value="#D4AF37" />
+      <Setter Property="BorderThickness" Value="3" />
+      <Setter Property="Padding" Value="12" />
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+          <GradientStop Color="#1F1930" Offset="0" />
+          <GradientStop Color="#0D0A14" Offset="1" />
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <Style Selector="Border.reel-drum">
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="BorderBrush" Value="#4A3B18" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="Margin" Value="5,0" />
+      <Setter Property="Background">
+        <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+          <GradientStop Color="#0B0912" Offset="0" />
+          <GradientStop Color="#1D182C" Offset="0.5" />
+          <GradientStop Color="#0B0912" Offset="1" />
+        </LinearGradientBrush>
+      </Setter>
+    </Style>
+
+    <Style Selector="Border.led-box">
+      <Setter Property="Background" Value="#09080F" />
+      <Setter Property="BorderBrush" Value="#3D3252" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="10,8" />
+    </Style>
+
+    <Style Selector="TextBlock.led-label">
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="#9E94B8" />
+      <Setter Property="LetterSpacing" Value="1" />
+    </Style>
+
+    <Style Selector="TextBlock.led-value">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="#F5D061" />
+    </Style>
+
+    <Style Selector="TextBlock.reel-icon">
+      <Setter Property="FontSize" Value="42" />
       <Setter Property="FontWeight" Value="Bold" />
       <Setter Property="HorizontalAlignment" Value="Center" />
       <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="RenderTransform" Value="scale(1)" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="TextBlock.reel-icon.win-pulse">
+      <Setter Property="RenderTransform" Value="scale(1.22)" />
+    </Style>
+
+    <Style Selector="Border.reel-drum.win-pulse">
+      <Setter Property="BorderBrush" Value="#4ADE80" />
+    </Style>
+    <Style Selector="Border.reel-drum.jackpot-pulse">
+      <Setter Property="BorderBrush" Value="#FFE680" />
+    </Style>
+
+    <Style Selector="Border.marquee.win-pulse">
+      <Setter Property="BorderBrush" Value="#4ADE80" />
+    </Style>
+    <Style Selector="Border.marquee.jackpot-pulse">
+      <Setter Property="BorderBrush" Value="#00F5D4" />
+    </Style>
+
+    <Style Selector="Border.win-ticker">
+      <Setter Property="Background" Value="#09080F" />
+      <Setter Property="BorderBrush" Value="#4A3B18" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="12,8" />
+    </Style>
+    <Style Selector="Border.win-ticker.win-pulse">
+      <Setter Property="Background" Value="#0F291A" />
+      <Setter Property="BorderBrush" Value="#4ADE80" />
+    </Style>
+    <Style Selector="Border.win-ticker.jackpot-pulse">
+      <Setter Property="Background" Value="#3B1228" />
+      <Setter Property="BorderBrush" Value="#FFE680" />
+    </Style>
+
+    <Style Selector="TextBlock.reel-label">
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="LetterSpacing" Value="1.5" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TextBlock.reel-peek">
+      <Setter Property="FontSize" Value="22" />
+      <Setter Property="Opacity" Value="0.28" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Tactile Spin Button -->
+    <Style Selector="Button.spin-btn">
+      <Setter Property="Background" Value="#C81E2B" />
+      <Setter Property="Foreground" Value="#FFF8E7" />
+      <Setter Property="BorderBrush" Value="#F5D061" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontWeight" Value="Black" />
+      <Setter Property="Padding" Value="24,10" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.spin-btn:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#E02836" />
+      <Setter Property="BorderBrush" Value="#FFE680" />
+    </Style>
+    <Style Selector="Button.spin-btn:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="#9E141F" />
+    </Style>
+    <Style Selector="Button.spin-btn:disabled /template/ ContentPresenter">
+      <Setter Property="Background" Value="#3D262B" />
+      <Setter Property="BorderBrush" Value="#66583A" />
+      <Setter Property="Opacity" Value="0.6" />
+    </Style>
+
+    <!-- Bet Chip Buttons -->
+    <Style Selector="Button.bet-chip">
+      <Setter Property="Background" Value="#211C33" />
+      <Setter Property="Foreground" Value="#E5E0F2" />
+      <Setter Property="BorderBrush" Value="#4B406B" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="MinWidth" Value="44" />
+      <Setter Property="Height" Value="34" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.bet-chip.selected">
+      <Setter Property="Background" Value="#D4AF37" />
+      <Setter Property="Foreground" Value="#140F1F" />
+      <Setter Property="BorderBrush" Value="#FFF0A8" />
     </Style>
   </Application.Styles>
 </Application>

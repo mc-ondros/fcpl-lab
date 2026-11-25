@@ -7,17 +7,26 @@ namespace Capstone.Core.Model;
 /// </summary>
 public sealed class SlotMachine
 {
-    private static readonly Symbol[] AllSymbols = Enum.GetValues<Symbol>();
-
     private readonly Random _random;
     private readonly IPaytable _paytable;
     private int _spinCounter;
 
-    public SlotMachine(Random? random = null, IPaytable? paytable = null)
+    public SlotMachine(Random? random = null, IPaytable? paytable = null, ReelOdds? odds = null, int lossStreakThreshold = 5)
     {
         _random = random ?? new Random();
         _paytable = paytable ?? new Paytable();
+        Odds = odds ?? ReelOdds.Realistic();
+        LossStreakThreshold = Math.Max(0, lossStreakThreshold);
     }
+
+    /// <summary>Weighted symbol probabilities used when rolling each reel.</summary>
+    public ReelOdds Odds { get; }
+
+    /// <summary>
+    /// Number of consecutive losing spins before the machine awards a medium
+    /// retention prize on the next spin (0 disables the hook).
+    /// </summary>
+    public int LossStreakThreshold { get; set; }
 
     /// <summary>Fires after every completed spin.</summary>
     public event EventHandler<SpinCompletedEventArgs>? SpinCompleted;
@@ -46,8 +55,15 @@ public sealed class SlotMachine
         // Roll reels
         var reels = new Reels(RollSymbol(), RollSymbol(), RollSymbol());
 
-        // Calculate winnings
+        // Calculate winnings; if the player is on a losing streak, award a medium prize to keep them hooked
         var payout = _paytable.CalculatePayout(reels, bet);
+        if (payout == 0 && LossStreakThreshold > 0 && CountTrailingLosses(session) >= LossStreakThreshold)
+        {
+            var hookSymbol = _random.Next(2) == 0 ? Symbol.Orange : Symbol.Plum;
+            reels = new Reels(hookSymbol, hookSymbol, hookSymbol);
+            payout = _paytable.CalculatePayout(reels, bet);
+        }
+
         session.CurrentCredits += payout;
 
         _spinCounter++;
@@ -75,5 +91,18 @@ public sealed class SlotMachine
         return spin;
     }
 
-    private Symbol RollSymbol() => AllSymbols[_random.Next(AllSymbols.Length)];
+    private Symbol RollSymbol() => Odds.Roll(_random);
+
+    private static int CountTrailingLosses(Session session)
+    {
+        int losses = 0;
+        for (int i = session.Spins.Count - 1; i >= 0; i--)
+        {
+            if (session.Spins[i].Payout > 0)
+                break;
+            losses++;
+        }
+
+        return losses;
+    }
 }
