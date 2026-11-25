@@ -62,11 +62,11 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
     private int _winTotalTicks;
     private Spin? _pendingSpin;
     private string _searchQuery = string.Empty;
-    private string _status = "Insert bet and pull the lever!";
+    private string _status = "READY";
 
     public ArcadeViewModel()
     {
-        _machine = new SlotMachine(new Random(42));
+        _machine = new SlotMachine();
         _announcer = new SpinAnnouncer(line => Status = line);
         _announcer.Subscribe(_machine);
         _bell.Subscribe(_machine);
@@ -139,20 +139,20 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
     }
 
     public string RecentSymbolsText => _recentSymbols.Count == 0
-        ? "Recent: —"
-        : "Recent: " + string.Join(" ", _recentSymbols.Select(s => DescribeSymbol(s).Icon));
+        ? "—"
+        : string.Join(" ", _recentSymbols.Select(s => DescribeSymbol(s).Icon));
 
     public string SessionStatsText
     {
         get
         {
             if (_session.Spins.Count == 0)
-                return "Win rate: 0% · Best: 0";
+                return "0% win · Best 0";
 
             int wins = _session.Spins.Count(s => s.Payout > 0);
             int best = _session.Spins.Max(s => s.Payout);
             double rate = (double)wins / _session.Spins.Count * 100.0;
-            return $"Win rate: {rate:F0}% · Best: {best}";
+            return $"{rate:F0}% win · Best {best}";
         }
     }
 
@@ -325,7 +325,7 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
         if (!CanSpin)
         {
             if (!_isSpinning)
-                Status = "Not enough credits for that bet.";
+                Status = "LOW CREDITS";
             return;
         }
 
@@ -340,7 +340,7 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
         IsJackpotWin = false;
         LastWin = 0;
         DisplayedLastWin = 0;
-        Status = "Reels spinning...";
+        Status = "SPINNING...";
         _spinTick = 0;
         _pendingSpin = null;
         _spinTimer.Start();
@@ -362,7 +362,7 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
         Reel2State.Reset();
         Reel3State.Reset();
         SetReels("?", "?", "?");
-        Status = "New session ready. Pull the lever!";
+        Status = "READY";
         Refresh();
     }
 
@@ -491,15 +491,15 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
                 Spins = 3,
             };
             _historyStore.Add(bonus);
-            Status = $"★ JACKPOT! +{spin.Payout} CREDITS! ({BonusRules.DescribeBonus(bonus)}) ★";
+            Status = $"★ JACKPOT +{spin.Payout}! ({BonusRules.DescribeBonus(bonus)}) ★";
         }
         else if (spin.Payout > 0)
         {
-            Status = $"✨ WINNER! +{spin.Payout} CREDITS ({spin.Reels}) ✨";
+            Status = $"✨ +{spin.Payout} CREDITS ✨";
         }
         else
         {
-            Status = $"No match ({spin.Reels}) — try again!";
+            Status = "TRY AGAIN";
         }
 
         if (_searchMatcher.Matches(spin.DisplayName, _searchQuery))
@@ -584,13 +584,45 @@ public sealed class ArcadeViewModel : INotifyPropertyChanged
     private async Task LoadStoreAsync()
     {
         var loaded = await StoreJsonStorage.LoadAsync(_savePath);
-        History.Clear();
-        foreach (var item in loaded.All().OfType<Spin>().Reverse())
+        var items = loaded.All();
+        var loadedSpins = items.OfType<Spin>().ToList();
+
+        _session = NewSession();
+        foreach (var id in _historyStore.All().Select(i => i.Id).ToList())
+            _historyStore.Remove(id);
+
+        foreach (var item in items)
+            _historyStore.Add(item);
+
+        foreach (var spin in loadedSpins)
+            _session.Spins.Add(spin);
+
+        if (loadedSpins.Count > 0)
         {
-            if (_searchMatcher.Matches(item.DisplayName, _searchQuery))
-                History.Add(new SpinRow(item));
+            var latest = loadedSpins[^1];
+            _session.CurrentCredits = latest.CreditsAfter;
+            LastWin = latest.Payout;
+            DisplayedLastWin = latest.Payout;
+            Reel1State.SetSymbol(latest.Reels.First);
+            Reel2State.SetSymbol(latest.Reels.Second);
+            Reel3State.SetSymbol(latest.Reels.Third);
+            SetReels(latest.Reels.First.ToString(), latest.Reels.Second.ToString(), latest.Reels.Third.ToString());
+            _recentSymbols.Push(latest.Reels.First);
+            _recentSymbols.Push(latest.Reels.Second);
+            _recentSymbols.Push(latest.Reels.Third);
+        }
+        else
+        {
+            LastWin = 0;
+            DisplayedLastWin = 0;
+            Reel1State.Reset();
+            Reel2State.Reset();
+            Reel3State.Reset();
+            SetReels("?", "?", "?");
         }
 
+        RebuildFilteredHistory();
+        Refresh();
         Status = $"Loaded {loaded.Count} item(s) from disk.";
     }
 

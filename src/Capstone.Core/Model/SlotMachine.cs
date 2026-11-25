@@ -11,7 +11,7 @@ public sealed class SlotMachine
     private readonly IPaytable _paytable;
     private int _spinCounter;
 
-    public SlotMachine(Random? random = null, IPaytable? paytable = null, ReelOdds? odds = null, int lossStreakThreshold = 5)
+    public SlotMachine(Random? random = null, IPaytable? paytable = null, ReelOdds? odds = null, int lossStreakThreshold = 9)
     {
         _random = random ?? new Random();
         _paytable = paytable ?? new Paytable();

@@ -24,19 +24,19 @@ public sealed class ReelOdds
     }
 
     /// <summary>
-    /// Realistic casino-style weights (sum = 100) where cherries and lemons
-    /// appear often while 7s and Wilds are rare.
+    /// Realistic casino-style weights (sum = 100): ~14% natural win rate
+    /// (single-cherry consolations ~8.7%, rare 3-of-a-kind and jackpots).
     /// </summary>
     public static ReelOdds Realistic() => new(new Dictionary<Symbol, int>
     {
-        [Symbol.Cherry] = 24,
-        [Symbol.Lemon] = 20,
-        [Symbol.Orange] = 17,
-        [Symbol.Plum] = 14,
-        [Symbol.Bell] = 10,
-        [Symbol.Bar] = 7,
-        [Symbol.Seven] = 4,
-        [Symbol.Wild] = 4,
+        [Symbol.Cherry] = 3,
+        [Symbol.Lemon] = 28,
+        [Symbol.Orange] = 27,
+        [Symbol.Plum] = 25,
+        [Symbol.Bell] = 8,
+        [Symbol.Bar] = 5,
+        [Symbol.Seven] = 2,
+        [Symbol.Wild] = 2,
     });
 
     /// <summary>Equal probability (12.5% each) for every symbol.</summary>
