@@ -55,17 +55,17 @@ public sealed class ReelOdds
         [Symbol.Wild] = 10,
     });
 
-    /// <summary>Tight house-edge preset dominated by non-matching fruit symbols.</summary>
+    /// <summary>Tight house-edge preset (~78% RTP) with rare high-tier symbols.</summary>
     public static ReelOdds Tight() => new(new Dictionary<Symbol, int>
     {
-        [Symbol.Cherry] = 10,
-        [Symbol.Lemon] = 28,
-        [Symbol.Orange] = 26,
-        [Symbol.Plum] = 20,
+        [Symbol.Cherry] = 4,
+        [Symbol.Lemon] = 35,
+        [Symbol.Orange] = 30,
+        [Symbol.Plum] = 15,
         [Symbol.Bell] = 8,
-        [Symbol.Bar] = 4,
-        [Symbol.Seven] = 2,
-        [Symbol.Wild] = 2,
+        [Symbol.Bar] = 6,
+        [Symbol.Seven] = 1,
+        [Symbol.Wild] = 1,
     });
 
     public int TotalWeight => _weights.Values.Sum();

@@ -48,6 +48,18 @@ public class ReelOddsTests
     }
 
     [Fact]
+    public void Presets_AreOrderedByRtp_TightLessThanRealisticLessThanGenerous()
+    {
+        var paytable = new Paytable();
+        double tight = ReelOdds.Tight().CalculateTheoreticalRtp(paytable);
+        double realistic = ReelOdds.Realistic().CalculateTheoreticalRtp(paytable);
+        double generous = ReelOdds.Generous().CalculateTheoreticalRtp(paytable);
+
+        Assert.True(tight < realistic, $"Expected Tight ({tight:F1}%) < Realistic ({realistic:F1}%)");
+        Assert.True(realistic < generous, $"Expected Realistic ({realistic:F1}%) < Generous ({generous:F1}%)");
+    }
+
+    [Fact]
     public void LosingStreak_TriggersMediumRetentionPrize()
     {
         // Force losses using Lemon/Orange/Plum? No, use a weight of 100 on Lemon? That would win.
